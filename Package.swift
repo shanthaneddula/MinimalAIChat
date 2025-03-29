@@ -1,75 +1,60 @@
-// swift-tools-version: 5.9
-// The swift-tools-version declares the minimum version of Swift required to build this package.
-
+// swift-tools-version:5.9
 import PackageDescription
 
 let package = Package(
     name: "MinimalAIChat",
     platforms: [
-        .macOS(.v13)
+        .macOS(.v13),
     ],
     products: [
         .executable(
             name: "MinimalAIChat",
             targets: ["MinimalAIChat"]
-        )
+        ),
+        .library(
+            name: "MinimalAIChatCore",
+            targets: ["MinimalAIChatCore"]
+        ),
     ],
     dependencies: [
-        .package(url: "https://github.com/apple/swift-log.git", from: "1.5.3"),
-        .package(url: "https://github.com/apple/swift-async-algorithms.git", from: "1.0.0"),
+        .package(url: "https://github.com/apple/swift-log.git", from: "0.5.0"),
         .package(url: "https://github.com/apple/swift-collections.git", from: "1.0.0"),
-        .package(url: "https://github.com/apple/swift-argument-parser.git", from: "1.3.0"),
-        .package(url: "https://github.com/apple/swift-algorithms.git", from: "1.0.0"),
-        .package(url: "https://github.com/apple/swift-syntax.git", from: "509.0.0"),
-        .package(url: "https://github.com/apple/swift-asn1.git", from: "0.10.0"),
-        .package(url: "https://github.com/pointfreeco/swift-snapshot-testing.git", from: "1.12.0"),
-        .package(url: "https://github.com/apple/swift-crypto.git", from: "3.0.0"),
-        .package(url: "https://github.com/apple/swift-numerics.git", from: "1.0.0"),
-        .package(url: "https://github.com/apple/swift-atomics.git", from: "1.1.0"),
-        .package(url: "https://github.com/Quick/Quick.git", from: "7.3.0"),
-        .package(url: "https://github.com/Quick/Nimble.git", from: "13.2.0")
+        .package(url: "https://github.com/apple/swift-async-algorithms.git", from: "1.0.0"),
     ],
     targets: [
         .executableTarget(
             name: "MinimalAIChat",
             dependencies: [
+                "MinimalAIChatCore",
                 .product(name: "Logging", package: "swift-log"),
-                .product(name: "AsyncAlgorithms", package: "swift-async-algorithms"),
                 .product(name: "Collections", package: "swift-collections"),
-                .product(name: "ArgumentParser", package: "swift-argument-parser"),
-                .product(name: "Algorithms", package: "swift-algorithms"),
-                .product(name: "SwiftSyntax", package: "swift-syntax"),
-                .product(name: "SwiftASN1", package: "swift-asn1"),
-                .product(name: "SnapshotTesting", package: "swift-snapshot-testing"),
-                .product(name: "Crypto", package: "swift-crypto"),
-                .product(name: "Numerics", package: "swift-numerics"),
-                .product(name: "Atomics", package: "swift-atomics"),
-                .product(name: "Quick", package: "Quick"),
-                .product(name: "Nimble", package: "Nimble")
+                .product(name: "AsyncAlgorithms", package: "swift-async-algorithms"),
             ],
-            path: "App",
-            resources: [
-                .process("UI/Localization")
+            path: "Sources/MinimalAIChat"
+        ),
+        .target(
+            name: "MinimalAIChatCore",
+            dependencies: [
+                .product(name: "Logging", package: "swift-log"),
+                .product(name: "Collections", package: "swift-collections"),
+                .product(name: "AsyncAlgorithms", package: "swift-async-algorithms"),
             ],
-            swiftSettings: [
-                .enableExperimentalFeature("StrictConcurrency")
-            ]
+            path: "Sources/MinimalAIChatCore"
         ),
         .testTarget(
             name: "MinimalAIChatTests",
-            dependencies: ["MinimalAIChat"],
-            path: "Tests/Unit",
-            swiftSettings: [
-                .enableExperimentalFeature("StrictConcurrency")
-            ]
+            dependencies: ["MinimalAIChatCore"],
+            path: "Tests/Unit"
         ),
         .testTarget(
-            name: "MinimalAIChatUITests",
-            dependencies: ["MinimalAIChat"],
-            path: "Tests/UI",
-            swiftSettings: [
-                .enableExperimentalFeature("StrictConcurrency")
-            ]
-        )
+            name: "MinimalAIChatIntegrationTests",
+            dependencies: ["MinimalAIChatCore"],
+            path: "Tests/Integration"
+        ),
+        .testTarget(
+            name: "MinimalAIChatPerformanceTests",
+            dependencies: ["MinimalAIChatCore"],
+            path: "Tests/Performance"
+        ),
     ]
 )
