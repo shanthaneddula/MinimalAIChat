@@ -29,7 +29,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         let contentView = ContentView()
         window = NSWindow(
             contentRect: NSRect(x: 0, y: 0, width: 800, height: 600),
-            styleMask: [.titled, .closable, .miniaturizable, .resizable],
+            styleMask: [
+                .titled,
+                .closable,
+                .miniaturizable,
+                .resizable
+            ],
             backing: .buffered,
             defer: false
         )
