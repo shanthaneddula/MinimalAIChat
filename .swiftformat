@@ -1,0 +1,14 @@
+--indent 4
+--allman false
+--wraparguments before-first
+--wrapcollections before-first
+--closingparen same-line
+--commas always
+--comments indent
+--semicolons never
+--trimwhitespace always
+--header strip
+--maxwidth 120
+--wrapparameters before-first
+--importgrouping testable-bottom
+--xcodeindentation enabled 
