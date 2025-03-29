@@ -1,0 +1,41 @@
+name: Dependency Update
+
+on:
+  schedule:
+    - cron: '0 0 * * 0'  # Run weekly on Sunday at midnight
+
+jobs:
+  update:
+    name: Update Dependencies
+    runs-on: macos-latest
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Swift
+      uses: fwal/setup-swift@v1
+      with:
+        swift-version: "5.9"
+    
+    - name: Update Dependencies
+      run: |
+        swift package update
+        if git diff --quiet Package.resolved; then
+          echo "No dependency updates available"
+        else
+          echo "Dependencies have updates available"
+          git diff Package.resolved
+        fi
+    
+    - name: Create Pull Request
+      uses: peter-evans/create-pull-request@v5
+      with:
+        commit-message: "chore: update dependencies"
+        title: "chore: update dependencies"
+        body: |
+          Automated dependency update.
+          
+          This PR updates the project dependencies to their latest versions.
+          
+          Please review the changes and merge if appropriate.
+        branch: chore/dependency-update
+        delete-branch: true 

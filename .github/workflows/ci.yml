@@ -1,0 +1,64 @@
+name: CI
+
+on:
+  push:
+    branches: [ main, dev ]
+  pull_request:
+    branches: [ main, dev ]
+
+jobs:
+  build:
+    name: Build and Test
+    runs-on: macos-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Swift
+      uses: fwal/setup-swift@v1
+      with:
+        swift-version: "5.9"
+    
+    - name: Build
+      run: swift build -v
+    
+    - name: Run Tests
+      run: swift test -v
+    
+    - name: Run SwiftLint
+      run: |
+        brew install swiftlint
+        swiftlint lint --reporter codeclimate-logger | tee swiftlint-report.json
+    
+    - name: Upload SwiftLint Report
+      uses: actions/upload-artifact@v4
+      with:
+        name: swiftlint-report
+        path: swiftlint-report.json
+        retention-days: 7
+
+  codecov:
+    name: Upload Coverage
+    needs: build
+    runs-on: macos-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Swift
+      uses: fwal/setup-swift@v1
+      with:
+        swift-version: "5.9"
+    
+    - name: Install Codecov
+      run: |
+        brew install codecov
+    
+    - name: Generate Coverage
+      run: |
+        swift test --enable-code-coverage
+    
+    - name: Upload Coverage
+      run: |
+        xcrun llvm-cov export -format="lcov" .build/debug/MinimalAIChatPackageTests.xctest/Contents/MacOS/MinimalAIChatPackageTests > coverage.lcov
+        codecov -f coverage.lcov -B main
