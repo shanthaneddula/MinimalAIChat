@@ -12,7 +12,7 @@ struct ChatView: View {
         VStack {
             ScrollView {
                 LazyVStack(spacing: 12) {
-                    ForEach(0 ..< 5) { _ in
+                    ForEach(0..<5) { _ in
                         MessageBubble(isUser: Bool.random())
                     }
                 }
