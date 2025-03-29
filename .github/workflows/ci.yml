@@ -1,0 +1,89 @@
+name: CI
+
+on:
+  push:
+    branches: [ main, dev ]
+  pull_request:
+    branches: [ main, dev ]
+
+jobs:
+  build-and-test:
+    name: Build and Test
+    runs-on: macos-14
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Swift
+      uses: fwal/setup-swift@v1
+      with:
+        swift-version: "5.9"
+    
+    - name: Install Dependencies
+      run: |
+        brew install swiftlint swiftformat
+    
+    - name: Build
+      run: swift build -v
+    
+    - name: Run Tests
+      run: swift test -v
+    
+    - name: Run SwiftLint
+      run: swiftlint lint --quiet
+    
+    - name: Run SwiftFormat
+      run: swiftformat --lint --exclude Archived Sources Tests
+    
+    - name: Upload Build Artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: build
+        path: .build
+
+  code-coverage:
+    name: Code Coverage
+    runs-on: macos-14
+    needs: build-and-test
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Swift
+      uses: fwal/setup-swift@v1
+      with:
+        swift-version: "5.9"
+    
+    - name: Generate Code Coverage
+      run: |
+        swift test --enable-code-coverage
+        xcrun llvm-cov export -format="lcov" .build/debug/MinimalAIChatPackageTests.xctest/Contents/MacOS/MinimalAIChatPackageTests > coverage.lcov
+    
+    - name: Upload Coverage Report
+      uses: codecov/codecov-action@v4
+      with:
+        file: ./coverage.lcov
+        fail_ci_if_error: true
+
+  dependency-updates:
+    name: Dependency Updates
+    runs-on: macos-14
+    needs: build-and-test
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Swift
+      uses: fwal/setup-swift@v1
+      with:
+        swift-version: "5.9"
+    
+    - name: Check for Updates
+      run: |
+        swift package update
+        if git diff --quiet Package.resolved; then
+          echo "No dependency updates available"
+        else
+          echo "Dependencies have updates available"
+          git diff Package.resolved
+        fi
