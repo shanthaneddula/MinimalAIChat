@@ -1,0 +1,74 @@
+disabled_rules:
+  - trailing_whitespace
+  - line_length
+opt_in_rules:
+  - empty_count
+  - missing_docs
+  - force_unwrapping
+  - force_cast
+  - force_try
+  - todo
+  - notification_center_detachment
+  - legacy_random
+  - legacy_cg_graphics_functions
+  - legacy_constant
+  - legacy_nsgeometry_functions
+  - yoda_condition
+  - nimble_operator
+  - operator_usage_whitespace
+  - overridden_super_call
+  - prohibited_super_call
+  - redundant_nil_coalescing
+  - private_outlet
+  - prohibited_iboutlet
+  - custom_rules
+
+line_length:
+  warning: 120
+  error: 200
+
+type_body_length:
+  warning: 300
+  error: 400
+
+file_length:
+  warning: 500
+  error: 1000
+
+function_body_length:
+  warning: 50
+  error: 100
+
+cyclomatic_complexity:
+  warning: 10
+  error: 20
+
+reporter: "xcode"
+
+included:
+  - App
+  - Tests
+
+excluded:
+  - Pods
+  - Tests/Performance
+  - Tests/UI
+  - Tests/Integration
+
+line_length:
+  ignores_comments: true
+  ignores_urls: true
+  ignores_function_declarations: true
+  ignores_interpolated_strings: true
+
+custom_rules:
+  no_direct_standard_out_logs:
+    name: "Print Usage"
+    regex: "(print|NSLog)\\("
+    message: "Prefer using a logging framework over print or NSLog"
+    severity: warning
+  comments_space:
+    name: "Space After Comment"
+    regex: "//[^\\s]"
+    message: "There should be a space after //"
+    severity: warning 
