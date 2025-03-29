@@ -1,7 +1,7 @@
 ---
-name: Bug report
+name: Bug Report
 about: Create a report to help us improve
-title: ''
+title: '[BUG] '
 labels: bug
 assignees: ''
 
@@ -25,11 +25,12 @@ If applicable, add screenshots to help explain your problem.
 
 **Environment:**
  - OS: [e.g. macOS 14.0]
- - Version [e.g. 1.0.0]
- - Swift Version [e.g. 5.9]
+ - Swift Version: [e.g. 5.9]
+ - Xcode Version: [e.g. 15.0]
+ - Device: [e.g. MacBook Pro 2023]
 
 **Additional context**
 Add any other context about the problem here.
 
 **Logs**
-If applicable, add relevant logs to help diagnose the issue. 
+If applicable, please share relevant logs or error messages. 
