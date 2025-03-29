@@ -1,5 +1,5 @@
-import WebKit
 import SwiftUI
+import WebKit
 
 /// A manager class that handles WebView interactions with AI services
 ///
@@ -38,19 +38,19 @@ class WebViewManager: NSObject, ObservableObject {
     private var webView: WKWebView?
     private let configuration: WKWebViewConfiguration
     private var sessionManager: SessionManager?
-    
+
     @Published var isLoading = false
     @Published var error: Error?
     @Published var isAuthenticated = false
     @Published var currentService: AIService?
-    
+
     override init() {
         configuration = WKWebViewConfiguration()
         configuration.defaultWebpagePreferences.allowsContentJavaScript = true
         configuration.websiteDataStore = .nonPersistent()
         super.init()
     }
-    
+
     /// Creates and configures a new WebView instance
     ///
     /// This method sets up a new WebView with the appropriate configuration
@@ -65,7 +65,7 @@ class WebViewManager: NSObject, ObservableObject {
         self.webView = webView
         return webView
     }
-    
+
     /// Loads the specified AI service into the WebView
     ///
     /// This method handles loading the AI service URL and initializing
@@ -75,7 +75,7 @@ class WebViewManager: NSObject, ObservableObject {
     func loadAIService(url: URL) {
         guard let webView = webView else { return }
         isLoading = true
-        
+
         // Determine the service from the URL
         let host = url.host?.lowercased() ?? ""
         if host.contains("claude") {
@@ -87,13 +87,13 @@ class WebViewManager: NSObject, ObservableObject {
         } else {
             currentService = .claude // Default to Claude
         }
-        
+
         sessionManager = SessionManager(service: currentService!)
-        
+
         let request = URLRequest(url: url)
         webView.load(request)
     }
-    
+
     /// Injects a message into the current AI service
     ///
     /// This method handles sending messages to the AI service by injecting
@@ -102,10 +102,10 @@ class WebViewManager: NSObject, ObservableObject {
     /// - Parameter message: The message to send
     func injectMessage(_ message: String) {
         guard let webView = webView else { return }
-        
+
         // Escape special characters in the message
         let escapedMessage = message.replacingOccurrences(of: "\"", with: "\\\"")
-        
+
         let javascript = """
             (function() {
                 const input = document.querySelector('textarea');
@@ -121,14 +121,14 @@ class WebViewManager: NSObject, ObservableObject {
                 }
             })();
         """
-        
-        webView.evaluateJavaScript(javascript) { [weak self] result, error in
+
+        webView.evaluateJavaScript(javascript) { [weak self] _, error in
             if let error = error {
                 self?.error = error
             }
         }
     }
-    
+
     /// Clears the WebView and resets its state
     ///
     /// This method cleans up the WebView by clearing its contents
@@ -139,7 +139,7 @@ class WebViewManager: NSObject, ObservableObject {
         isAuthenticated = false
         currentService = nil
     }
-    
+
     /// Handles authentication state changes
     ///
     /// This method updates the authentication state based on the
@@ -152,11 +152,12 @@ class WebViewManager: NSObject, ObservableObject {
 }
 
 // MARK: - WKNavigationDelegate
+
 extension WebViewManager: WKNavigationDelegate {
-    func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
+    func webView(_: WKWebView, didFinish _: WKNavigation!) {
         isLoading = false
         updateAuthState()
-        
+
         // Check for authentication status
         if let service = currentService {
             Task {
@@ -164,19 +165,20 @@ extension WebViewManager: WKNavigationDelegate {
             }
         }
     }
-    
-    func webView(_ webView: WKWebView, didFail navigation: WKNavigation!, withError error: Error) {
+
+    func webView(_: WKWebView, didFail _: WKNavigation!, withError error: Error) {
         self.error = error
         isLoading = false
     }
 }
 
 // MARK: - WKUIDelegate
+
 extension WebViewManager: WKUIDelegate {
-    func webView(_ webView: WKWebView, createWebViewWith configuration: WKWebViewConfiguration, for navigationAction: WKNavigationAction, windowFeatures: WKWindowFeatures) -> WKWebView? {
+    func webView(_ webView: WKWebView, createWebViewWith _: WKWebViewConfiguration, for navigationAction: WKNavigationAction, windowFeatures _: WKWindowFeatures) -> WKWebView? {
         if navigationAction.targetFrame == nil {
             webView.load(navigationAction.request)
         }
         return nil
     }
-} 
+}

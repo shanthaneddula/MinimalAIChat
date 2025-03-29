@@ -3,7 +3,7 @@ enum MemoryPressureLevel: Comparable {
     case warning
     case critical
     case terminal
-    
+
     static func < (lhs: MemoryPressureLevel, rhs: MemoryPressureLevel) -> Bool {
         switch (lhs, rhs) {
         case (.normal, .warning), (.normal, .critical), (.normal, .terminal),
@@ -14,4 +14,4 @@ enum MemoryPressureLevel: Comparable {
             return false
         }
     }
-} 
+}

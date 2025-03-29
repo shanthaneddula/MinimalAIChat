@@ -1,13 +1,13 @@
-import Cocoa
-import Carbon
 import AppKit
+import Carbon
+import Cocoa
 
 /// Extension for NSEvent.ModifierFlags to add Carbon flags support
 extension NSEvent.ModifierFlags {
     /// Convert to Carbon modifier flags
     var carbonFlags: UInt32 {
         var carbonFlags: UInt32 = 0
-        
+
         if contains(.command) {
             carbonFlags |= UInt32(cmdKey)
         }
@@ -20,7 +20,7 @@ extension NSEvent.ModifierFlags {
         if contains(.shift) {
             carbonFlags |= UInt32(shiftKey)
         }
-        
+
         return carbonFlags
     }
 }
@@ -37,7 +37,7 @@ class HotkeyUIAlerts {
         alert.addButton(withTitle: "OK")
         alert.runModal()
     }
-    
+
     /// Show an alert to guide the user to grant accessibility permissions
     static func showAccessibilityPermissionsNeeded() {
         let alert = NSAlert()
@@ -46,7 +46,7 @@ class HotkeyUIAlerts {
         alert.alertStyle = .informational
         alert.addButton(withTitle: "Open System Preferences")
         alert.addButton(withTitle: "Later")
-        
+
         if alert.runModal() == .alertFirstButtonReturn {
             let prefpaneURL = URL(fileURLWithPath: "/System/Library/PreferencePanes/Security.prefPane")
             NSWorkspace.shared.open(prefpaneURL)

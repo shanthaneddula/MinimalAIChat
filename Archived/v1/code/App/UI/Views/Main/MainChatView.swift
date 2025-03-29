@@ -4,7 +4,7 @@ import SwiftUI
 struct MainChatView: View {
     @StateObject private var viewModel = WebViewModel()
     @State private var isShowingServiceSelector = false
-    
+
     var body: some View {
         VStack(spacing: 0) {
             // Top toolbar
@@ -28,9 +28,9 @@ struct MainChatView: View {
                 .popover(isPresented: $isShowingServiceSelector) {
                     ServiceSelectorView(viewModel: viewModel)
                 }
-                
+
                 Spacer()
-                
+
                 // Refresh button
                 Button(action: {
                     viewModel.loadSelectedService()
@@ -50,13 +50,13 @@ struct MainChatView: View {
                     .foregroundColor(Color.gray.opacity(0.2)),
                 alignment: .bottom
             )
-            
+
             // Web view container
             ZStack {
                 WebViewWrapper(url: $viewModel.currentURL) { url in
                     viewModel.handleNavigationFinished(url: url)
                 }
-                
+
                 if viewModel.isLoading {
                     ProgressView()
                         .scaleEffect(1.5)
@@ -73,7 +73,7 @@ struct MainChatView: View {
 struct ServiceSelectorView: View {
     @ObservedObject var viewModel: WebViewModel
     @Environment(\.presentationMode) var presentationMode
-    
+
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             ForEach(WebViewModel.AIService.allCases) { service in
@@ -95,7 +95,7 @@ struct ServiceSelectorView: View {
                     .contentShape(Rectangle())
                 }
                 .buttonStyle(PlainButtonStyle())
-                
+
                 if service != WebViewModel.AIService.allCases.last {
                     Divider()
                         .padding(.leading, 16)

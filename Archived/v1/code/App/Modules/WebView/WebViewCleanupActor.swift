@@ -49,50 +49,50 @@ import WebKit
 public actor WebViewCleanupActor: WebViewCleanupable {
     private let dataStore: WKWebsiteDataStore
     private var cleanupTasks: [Task<Void, Error>] = []
-    
+
     public init(dataStore: WKWebsiteDataStore = .default()) {
         self.dataStore = dataStore
     }
-    
+
     func cleanup() async throws {
         // Cancel any existing cleanup tasks
         for task in cleanupTasks {
             task.cancel()
         }
         cleanupTasks.removeAll()
-        
+
         // Create a new cleanup task
         let task = Task {
             try await cleanupWebViewData()
             try await cleanupWebViewCookies()
         }
-        
+
         cleanupTasks.append(task)
-        
+
         // Wait for the task to complete
         try await task.value
     }
-    
+
     /// Cleans up all WebView data
     func cleanupWebViewData() async throws {
         let dataTypes = WKWebsiteDataStore.allWebsiteDataTypes()
         let date = Date(timeIntervalSince1970: 0)
-        
+
         try await dataStore.removeData(ofTypes: dataTypes, modifiedSince: date)
     }
-    
+
     /// Cleans up WebView cookies
     func cleanupWebViewCookies() async throws {
         let cookieStore = dataStore.httpCookieStore
         let cookies = try await cookieStore.allCookies()
-        
+
         for cookie in cookies {
             try await cookieStore.delete(cookie)
         }
     }
 
     /// Performs WebKit data removal with improved error handling
-    /// 
+    ///
     /// This method handles the actual removal of WebKit data with proper error handling
     /// and actor isolation. It ensures that all operations are performed on the main actor
     /// and properly handles completion callbacks.
@@ -102,15 +102,15 @@ public actor WebViewCleanupActor: WebViewCleanupable {
     ///   - types: The types of data to remove
     /// - Throws: Any errors encountered during the cleanup process
     private func removeWebKitData(
-        _ dataStore: WKWebsiteDataStore, 
+        _ dataStore: WKWebsiteDataStore,
         types: Set<WebsiteDataType>
     ) async throws {
         let stringTypes = Set(types.map { $0.rawValue() })
-        
+
         try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
             Task { @MainActor in
                 dataStore.removeData(
-                    ofTypes: stringTypes, 
+                    ofTypes: stringTypes,
                     modifiedSince: .distantPast
                 ) { error in
                     if let error = error {
@@ -122,7 +122,7 @@ public actor WebViewCleanupActor: WebViewCleanupable {
             }
         }
     }
-    
+
     /// Cleans up WebKit caches with improved concurrency and error handling
     ///
     /// This method removes all cached data from the default WebKit data store.
@@ -132,13 +132,13 @@ public actor WebViewCleanupActor: WebViewCleanupable {
     /// - Throws: Any errors encountered during the cleanup process
     func cleanupWebKitCaches() async throws {
         let dataStore = await WKWebsiteDataStore.default()
-        
+
         try await removeWebKitData(
-            dataStore, 
+            dataStore,
             types: [.memoryCache, .diskCache, .offlineWebApplicationCache, .allWebsiteData]
         )
     }
-    
+
     /// Cleans up WebKit data stores with improved concurrency and error handling
     ///
     /// This method removes all data from the default WebKit data store, including
@@ -148,9 +148,9 @@ public actor WebViewCleanupActor: WebViewCleanupable {
     /// - Throws: Any errors encountered during the cleanup process
     func cleanupWebKitDataStores() async throws {
         let dataStore = await WKWebsiteDataStore.default()
-        
+
         try await removeWebKitData(
-            dataStore, 
+            dataStore,
             types: [.memoryCache, .diskCache, .offlineWebApplicationCache, .allWebsiteData]
         )
     }
@@ -165,10 +165,11 @@ public actor WebViewCleanupActor: WebViewCleanupable {
                 guard let url = item as? URL,
                       let resourceValues = try? url.resourceValues(forKeys: [.isRegularFileKey]),
                       resourceValues.isRegularFile == true,
-                      types.contains(url.pathExtension) else {
+                      types.contains(url.pathExtension)
+                else {
                     return
                 }
-                
+
                 do {
                     try FileManager.default.removeItem(at: url)
                 } catch {
@@ -176,8 +177,8 @@ public actor WebViewCleanupActor: WebViewCleanupable {
                     return
                 }
             }
-            
+
             continuation.resume()
         }
     }
-} 
+}

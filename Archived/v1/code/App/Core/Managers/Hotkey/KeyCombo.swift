@@ -1,20 +1,20 @@
-import Foundation
 import Carbon
+import Foundation
 
 /// Represents a key combination for global hotkeys
 public struct KeyCombo: Codable, Equatable {
     public let key: KeyCode
     public let modifiers: Set<KeyModifier>
-    
+
     public init(key: KeyCode, modifiers: Set<KeyModifier> = []) {
         self.key = key
         self.modifiers = modifiers
     }
-    
+
     var carbonKeyCode: UInt32 {
         switch key {
         case .space: return 0x31
-        case .`return`: return 0x24
+        case .return: return 0x24
         case .tab: return 0x30
         case .escape: return 0x35
         case .delete: return 0x33
@@ -44,7 +44,7 @@ public struct KeyCombo: Codable, Equatable {
         case .f20: return 0x5A
         }
     }
-    
+
     var carbonModifiers: UInt32 {
         var modifiers: UInt32 = 0
         for modifier in self.modifiers {
@@ -84,4 +84,4 @@ public enum KeyModifier: String, Codable, Hashable {
     case shift
     case option
     case control
-} 
+}

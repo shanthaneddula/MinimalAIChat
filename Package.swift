@@ -4,7 +4,7 @@ import PackageDescription
 let package = Package(
     name: "MinimalAIChat",
     platforms: [
-        .macOS(.v13)
+        .macOS(.v13),
     ],
     products: [
         .executable(
@@ -14,12 +14,12 @@ let package = Package(
         .library(
             name: "MinimalAIChatCore",
             targets: ["MinimalAIChatCore"]
-        )
+        ),
     ],
     dependencies: [
         .package(url: "https://github.com/apple/swift-log.git", from: "0.5.0"),
         .package(url: "https://github.com/apple/swift-collections.git", from: "1.0.0"),
-        .package(url: "https://github.com/apple/swift-async-algorithms.git", from: "1.0.0")
+        .package(url: "https://github.com/apple/swift-async-algorithms.git", from: "1.0.0"),
     ],
     targets: [
         .executableTarget(
@@ -28,7 +28,7 @@ let package = Package(
                 "MinimalAIChatCore",
                 .product(name: "Logging", package: "swift-log"),
                 .product(name: "Collections", package: "swift-collections"),
-                .product(name: "AsyncAlgorithms", package: "swift-async-algorithms")
+                .product(name: "AsyncAlgorithms", package: "swift-async-algorithms"),
             ],
             path: "Sources/MinimalAIChat"
         ),
@@ -37,7 +37,7 @@ let package = Package(
             dependencies: [
                 .product(name: "Logging", package: "swift-log"),
                 .product(name: "Collections", package: "swift-collections"),
-                .product(name: "AsyncAlgorithms", package: "swift-async-algorithms")
+                .product(name: "AsyncAlgorithms", package: "swift-async-algorithms"),
             ],
             path: "Sources/MinimalAIChatCore"
         ),
@@ -55,6 +55,6 @@ let package = Package(
             name: "MinimalAIChatPerformanceTests",
             dependencies: ["MinimalAIChatCore"],
             path: "Tests/Performance"
-        )
+        ),
     ]
-) 
+)

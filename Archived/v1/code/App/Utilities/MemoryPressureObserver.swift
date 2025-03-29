@@ -1,5 +1,5 @@
-import Foundation
 import AppKit
+import Foundation
 
 /// A class that observes system memory pressure and notifies when it changes
 ///
@@ -15,11 +15,11 @@ class MemoryPressureObserver {
     private var timer: Timer?
     private let handler: (MemoryPressureLevel) -> Void
     private let checkInterval: TimeInterval = 5.0 // Check every 5 seconds
-    
+
     init(handler: @escaping (MemoryPressureLevel) -> Void) {
         self.handler = handler
     }
-    
+
     /// Starts observing memory pressure
     ///
     /// This method initializes the timer and performs an initial check.
@@ -31,13 +31,13 @@ class MemoryPressureObserver {
                 await self?.checkMemoryPressure()
             }
         }
-        
+
         // Initial check
         Task {
             await checkMemoryPressure()
         }
     }
-    
+
     /// Stops observing memory pressure.
     ///
     /// This method invalidates the timer and stops all memory pressure checks.
@@ -47,20 +47,20 @@ class MemoryPressureObserver {
             timer = nil
         }
     }
-    
+
     /// Checks the current memory pressure level and calls the handler if it has changed
     private func checkMemoryPressure() async {
         let level = await determineMemoryPressureLevel()
         handler(level)
     }
-    
+
     /// Determines the current memory pressure level based on system metrics
     ///
     /// Returns: The current MemoryPressureLevel
     private func determineMemoryPressureLevel() async -> MemoryPressureLevel {
         let processInfo = ProcessInfo.processInfo
         let isOperatingSystemAtLeast = processInfo.isOperatingSystemAtLeast
-        
+
         if isOperatingSystemAtLeast(OperatingSystemVersion(majorVersion: 10, minorVersion: 10, patchVersion: 0)) {
             switch processInfo.thermalState {
             case .nominal:
@@ -78,7 +78,7 @@ class MemoryPressureObserver {
             // Fallback for older OS versions
             let memoryPressure = Double(processInfo.physicalMemory)
             let totalMemory = Double(ProcessInfo.processInfo.physicalMemory)
-            
+
             if memoryPressure < totalMemory * 0.7 {
                 return .normal
             } else if memoryPressure < totalMemory * 0.85 {
@@ -90,7 +90,7 @@ class MemoryPressureObserver {
             }
         }
     }
-    
+
     deinit {
         stopObserving()
     }

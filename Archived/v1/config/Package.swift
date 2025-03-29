@@ -6,13 +6,13 @@ import PackageDescription
 let package = Package(
     name: "MinimalAIChat",
     platforms: [
-        .macOS(.v13)
+        .macOS(.v13),
     ],
     products: [
         .executable(
             name: "MinimalAIChat",
             targets: ["MinimalAIChat"]
-        )
+        ),
     ],
     dependencies: [
         .package(url: "https://github.com/apple/swift-log.git", from: "1.5.3"),
@@ -27,7 +27,7 @@ let package = Package(
         .package(url: "https://github.com/apple/swift-numerics.git", from: "1.0.0"),
         .package(url: "https://github.com/apple/swift-atomics.git", from: "1.1.0"),
         .package(url: "https://github.com/Quick/Quick.git", from: "7.3.0"),
-        .package(url: "https://github.com/Quick/Nimble.git", from: "13.2.0")
+        .package(url: "https://github.com/Quick/Nimble.git", from: "13.2.0"),
     ],
     targets: [
         .executableTarget(
@@ -45,14 +45,14 @@ let package = Package(
                 .product(name: "Numerics", package: "swift-numerics"),
                 .product(name: "Atomics", package: "swift-atomics"),
                 .product(name: "Quick", package: "Quick"),
-                .product(name: "Nimble", package: "Nimble")
+                .product(name: "Nimble", package: "Nimble"),
             ],
             path: "App",
             resources: [
-                .process("UI/Localization")
+                .process("UI/Localization"),
             ],
             swiftSettings: [
-                .enableExperimentalFeature("StrictConcurrency")
+                .enableExperimentalFeature("StrictConcurrency"),
             ]
         ),
         .testTarget(
@@ -60,7 +60,7 @@ let package = Package(
             dependencies: ["MinimalAIChat"],
             path: "Tests/Unit",
             swiftSettings: [
-                .enableExperimentalFeature("StrictConcurrency")
+                .enableExperimentalFeature("StrictConcurrency"),
             ]
         ),
         .testTarget(
@@ -68,8 +68,8 @@ let package = Package(
             dependencies: ["MinimalAIChat"],
             path: "Tests/UI",
             swiftSettings: [
-                .enableExperimentalFeature("StrictConcurrency")
+                .enableExperimentalFeature("StrictConcurrency"),
             ]
-        )
+        ),
     ]
 )

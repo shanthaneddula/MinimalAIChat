@@ -7,28 +7,28 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     private var spotlightIndexer: SpotlightIndexer?
     private var universalLinkRouter: UniversalLinkRouter?
     private var hotkeyManager: HotkeyManager?
-    
-    func applicationDidFinishLaunching(_ notification: Notification) {
+
+    func applicationDidFinishLaunching(_: Notification) {
         // Initialize components
         deepLinkHandler = DeepLinkHandler()
         spotlightIndexer = SpotlightIndexer()
         universalLinkRouter = UniversalLinkRouter()
         hotkeyManager = HotkeyManager()
-        
+
         // Setup hotkey
         setupGlobalHotkey()
-        
+
         // Setup memory optimization
         setupMemoryOptimization()
     }
-    
-    func applicationWillTerminate(_ notification: Notification) {
+
+    func applicationWillTerminate(_: Notification) {
         // Clean up resources
         hotkeyManager?.unregisterAllHotkeys()
     }
-    
+
     // Handle URL schemes
-    func application(_ application: NSApplication, open urls: [URL]) {
+    func application(_: NSApplication, open urls: [URL]) {
         for url in urls {
             if url.scheme == Constants.appURLScheme {
                 deepLinkHandler?.handleURL(url)
@@ -37,9 +37,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             }
         }
     }
-    
+
     // MARK: - Private Methods
-    
+
     private func setupGlobalHotkey() {
         // Register default hotkey
         let defaultKeyCombo = KeyCombo(keyCode: 49, modifiers: [.command, .shift]) // Space + Cmd + Shift
@@ -47,7 +47,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             self?.toggleMainWindow()
         }
     }
-    
+
     private func setupMemoryOptimization() {
         // Setup memory pressure observer
         let memoryOptimizer = MemoryOptimizer()
@@ -58,7 +58,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         }
         pressureObserver.startObserving()
     }
-    
+
     private func toggleMainWindow() {
         // Toggle main window visibility
         WindowManager.shared.toggleMainWindow()

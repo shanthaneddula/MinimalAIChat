@@ -1,8 +1,8 @@
-import Foundation
-import SwiftUI
 import AppKit
 import Combine
+import Foundation
 import Security
+import SwiftUI
 
 /// A manager class that handles user preferences and API key management
 ///
@@ -39,98 +39,98 @@ import Security
 @MainActor
 public class SettingsManager: ObservableObject {
     // MARK: - Published Properties
-    
+
     @Published public var selectedAIService: AIService = .openAI
     @Published public var selectedTheme: Theme = .system
     @Published public var errorMessage: String?
     @Published public var isShowingError: Bool = false
-    
+
     @Published var hotkeyEnabled: Bool {
         didSet {
             savePreference(.hotkeyEnabled, value: hotkeyEnabled)
         }
     }
-    
+
     @Published var hotkeyModifiers: NSEvent.ModifierFlags {
         didSet {
             savePreference(.hotkeyModifiers, value: hotkeyModifiers.rawValue)
         }
     }
-    
+
     @Published var hotkeyKey: Key {
         didSet {
             savePreference(.hotkeyKey, value: hotkeyKey.rawValue)
         }
     }
-    
+
     @Published var darkMode: Bool {
         didSet {
             savePreference(.darkMode, value: darkMode)
         }
     }
-    
+
     @Published var fontSize: CGFloat {
         didSet {
             savePreference(.fontSize, value: fontSize)
         }
     }
-    
+
     @Published var appearance: Appearance {
         didSet {
             savePreference(.appearance, value: appearance.rawValue)
         }
     }
-    
+
     @Published var startAtLogin: Bool {
         didSet {
             savePreference(.startAtLogin, value: startAtLogin)
         }
     }
-    
+
     @Published var showInMenuBar: Bool {
         didSet {
             savePreference(.showInMenuBar, value: showInMenuBar)
         }
     }
-    
+
     @Published var showInDock: Bool {
         didSet {
             savePreference(.showInDock, value: showInDock)
         }
     }
-    
+
     @Published var globalHotkeyEnabled: Bool {
         didSet {
             savePreference(.globalHotkeyEnabled, value: globalHotkeyEnabled)
         }
     }
-    
+
     // MARK: - Private Properties
-    
+
     private let defaults = UserDefaults.standard
     private let keychain: KeychainManager
-    
+
     // MARK: - Initialization
-    
+
     public init() {
-        self.keychain = KeychainManager()
+        keychain = KeychainManager()
         // Load saved preferences or use defaults
-        self.selectedAIService = AIService(rawValue: loadPreference(.selectedService) ?? "OpenAI") ?? .openAI
-        self.selectedTheme = Theme(rawValue: loadPreference(.theme) ?? "system") ?? .system
-        self.hotkeyEnabled = loadPreference(.hotkeyEnabled) ?? true
-        self.hotkeyModifiers = NSEvent.ModifierFlags(rawValue: loadPreference(.hotkeyModifiers) ?? 0)
-        self.hotkeyKey = Key(rawValue: loadPreference(.hotkeyKey) ?? "space") ?? .space
-        self.darkMode = loadPreference(.darkMode) ?? false
-        self.fontSize = loadPreference(.fontSize) ?? 14.0
-        self.appearance = Appearance(rawValue: loadPreference(.appearance) ?? "system") ?? .system
-        self.startAtLogin = loadPreference(.startAtLogin) ?? false
-        self.showInMenuBar = loadPreference(.showInMenuBar) ?? true
-        self.showInDock = loadPreference(.showInDock) ?? true
-        self.globalHotkeyEnabled = loadPreference(.globalHotkeyEnabled) ?? true
+        selectedAIService = AIService(rawValue: loadPreference(.selectedService) ?? "OpenAI") ?? .openAI
+        selectedTheme = Theme(rawValue: loadPreference(.theme) ?? "system") ?? .system
+        hotkeyEnabled = loadPreference(.hotkeyEnabled) ?? true
+        hotkeyModifiers = NSEvent.ModifierFlags(rawValue: loadPreference(.hotkeyModifiers) ?? 0)
+        hotkeyKey = Key(rawValue: loadPreference(.hotkeyKey) ?? "space") ?? .space
+        darkMode = loadPreference(.darkMode) ?? false
+        fontSize = loadPreference(.fontSize) ?? 14.0
+        appearance = Appearance(rawValue: loadPreference(.appearance) ?? "system") ?? .system
+        startAtLogin = loadPreference(.startAtLogin) ?? false
+        showInMenuBar = loadPreference(.showInMenuBar) ?? true
+        showInDock = loadPreference(.showInDock) ?? true
+        globalHotkeyEnabled = loadPreference(.globalHotkeyEnabled) ?? true
     }
-    
+
     // MARK: - API Key Management
-    
+
     /// Stores an API key securely in the keychain
     ///
     /// - Parameters:
@@ -145,7 +145,7 @@ public class SettingsManager: ObservableObject {
             throw error
         }
     }
-    
+
     /// Retrieves an API key from the keychain
     ///
     /// - Parameter service: The service to get the key for
@@ -162,7 +162,7 @@ public class SettingsManager: ObservableObject {
             throw error
         }
     }
-    
+
     /// Removes an API key from the keychain
     ///
     /// - Parameter service: The service to remove the key for
@@ -175,17 +175,17 @@ public class SettingsManager: ObservableObject {
             throw error
         }
     }
-    
+
     // MARK: - Private Methods
-    
+
     private func savePreference(_ key: PreferenceKey, value: Any) {
         defaults.set(value, forKey: key.rawValue)
     }
-    
+
     private func loadPreference<T>(_ key: PreferenceKey) -> T? {
         defaults.object(forKey: key.rawValue) as? T
     }
-    
+
     @MainActor
     func resetToDefaults() {
         // Reset all settings to their default values
@@ -207,56 +207,56 @@ public class SettingsManager: ObservableObject {
 
 extension SettingsManager {
     enum Appearance: String, CaseIterable, Identifiable {
-        case light = "light"
-        case dark = "dark"
-        case system = "system"
-        
-        var id: String { self.rawValue }
+        case light
+        case dark
+        case system
+
+        var id: String { rawValue }
     }
-    
+
     /// Preference keys for UserDefaults
     private enum PreferenceKey: String {
         case selectedService = "selectedAIService"
-        case theme = "theme"
-        case hotkeyEnabled = "hotkeyEnabled"
-        case hotkeyModifiers = "hotkeyModifiers"
-        case hotkeyKey = "hotkeyKey"
-        case darkMode = "darkMode"
-        case fontSize = "fontSize"
-        case appearance = "appearance"
-        case startAtLogin = "startAtLogin"
-        case showInMenuBar = "showInMenuBar"
-        case showInDock = "showInDock"
-        case globalHotkeyEnabled = "globalHotkeyEnabled"
+        case theme
+        case hotkeyEnabled
+        case hotkeyModifiers
+        case hotkeyKey
+        case darkMode
+        case fontSize
+        case appearance
+        case startAtLogin
+        case showInMenuBar
+        case showInDock
+        case globalHotkeyEnabled
     }
-    
+
     /// Available hotkey keys
     enum Key: String, CaseIterable, Identifiable {
-        case space = "space"
+        case space
         case return_ = "return"
-        case tab = "tab"
-        case escape = "escape"
-        case delete = "delete"
-        case forwardDelete = "forwardDelete"
-        case upArrow = "upArrow"
-        case downArrow = "downArrow"
-        case leftArrow = "leftArrow"
-        case rightArrow = "rightArrow"
-        case f1 = "f1"
-        case f2 = "f2"
-        case f3 = "f3"
-        case f4 = "f4"
-        case f5 = "f5"
-        case f6 = "f6"
-        case f7 = "f7"
-        case f8 = "f8"
-        case f9 = "f9"
-        case f10 = "f10"
-        case f11 = "f11"
-        case f12 = "f12"
-        
-        var id: String { self.rawValue }
-        
+        case tab
+        case escape
+        case delete
+        case forwardDelete
+        case upArrow
+        case downArrow
+        case leftArrow
+        case rightArrow
+        case f1
+        case f2
+        case f3
+        case f4
+        case f5
+        case f6
+        case f7
+        case f8
+        case f9
+        case f10
+        case f11
+        case f12
+
+        var id: String { rawValue }
+
         var displayName: String {
             switch self {
             case .space: return "Space"
@@ -284,4 +284,4 @@ extension SettingsManager {
             }
         }
     }
-} 
+}

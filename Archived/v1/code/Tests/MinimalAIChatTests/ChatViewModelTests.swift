@@ -1,3 +1,7 @@
+import Combine
+@testable import MinimalAIChat
+import WebKit
+
 /// Tests for the ChatViewModel class that manages chat interface and WebView interactions
 ///
 /// This test suite verifies the functionality of ChatViewModel, including:
@@ -42,28 +46,25 @@
 /// try await testSuite.tearDown()
 /// ```
 import XCTest
-import WebKit
-import Combine
-@testable import MinimalAIChat
 
 @MainActor
 final class ChatViewModelTests: XCTestCase {
     // MARK: - Properties
-    
+
     /// The view model being tested
     var viewModel: ChatViewModel!
-    
+
     /// Mock WebView manager for testing WebView interactions
     var mockWebViewManager: MockWebViewManager!
-    
+
     /// Mock storage manager for testing persistence
     var mockStorageManager: MockStorageManager!
-    
+
     /// Mock settings manager for testing configuration
     var mockSettingsManager: MockSettingsManager!
-    
+
     // MARK: - Setup and Teardown
-    
+
     override func setUp() async throws {
         try await super.setUp()
         mockWebViewManager = MockWebViewManager()
@@ -75,7 +76,7 @@ final class ChatViewModelTests: XCTestCase {
             settingsManager: mockSettingsManager
         )
     }
-    
+
     override func tearDown() async throws {
         viewModel = nil
         mockWebViewManager = nil
@@ -83,9 +84,9 @@ final class ChatViewModelTests: XCTestCase {
         mockSettingsManager = nil
         try await super.tearDown()
     }
-    
+
     // MARK: - Message Tests
-    
+
     /// Tests the message sending functionality
     ///
     /// Verifies that:
@@ -95,17 +96,17 @@ final class ChatViewModelTests: XCTestCase {
     func testSendMessage() async throws {
         // Given
         let message = "Test message"
-        
+
         // When
         viewModel.sendMessage(message)
-        
+
         // Then
         XCTAssertEqual(viewModel.messages.count, 1)
         XCTAssertEqual(viewModel.messages.first?.content, message)
         XCTAssertTrue(viewModel.isLoading)
         XCTAssertTrue(mockWebViewManager.injectMessageCalled)
     }
-    
+
     /// Tests the chat clearing functionality
     ///
     /// Verifies that:
@@ -115,18 +116,18 @@ final class ChatViewModelTests: XCTestCase {
     func testClearChat() async throws {
         // Given
         viewModel.sendMessage("Test message")
-        
+
         // When
         viewModel.clearChat()
-        
+
         // Then
         XCTAssertTrue(viewModel.messages.isEmpty)
         XCTAssertTrue(mockStorageManager.clearMessagesCalled)
         XCTAssertTrue(mockWebViewManager.clearWebViewCalled)
     }
-    
+
     // MARK: - WebView Tests
-    
+
     /// Tests the WebView initialization
     ///
     /// Verifies that:
@@ -136,14 +137,14 @@ final class ChatViewModelTests: XCTestCase {
     func testInitializeWebView() async throws {
         // When
         viewModel.initializeWebView()
-        
+
         // Then
         XCTAssertTrue(mockWebViewManager.createWebViewCalled)
         XCTAssertTrue(mockWebViewManager.loadAIServiceCalled)
     }
-    
+
     // MARK: - Error Handling Tests
-    
+
     /// Tests error handling through WebView manager
     ///
     /// Verifies that:
@@ -154,16 +155,16 @@ final class ChatViewModelTests: XCTestCase {
         // Given
         let message = "Test message"
         let error = NSError(domain: "test", code: -1)
-        
+
         // When
         viewModel.sendMessage(message)
         mockWebViewManager.simulateError(error)
-        
+
         // Then
         XCTAssertTrue(viewModel.showError)
         XCTAssertEqual(viewModel.error?.localizedDescription, error.localizedDescription)
     }
-    
+
     /// Tests the retry mechanism for failed messages
     ///
     /// Verifies that:
@@ -175,15 +176,15 @@ final class ChatViewModelTests: XCTestCase {
         let message = "Test message"
         viewModel.sendMessage(message)
         mockWebViewManager.simulateError(NSError(domain: "test", code: -1))
-        
+
         // When
         viewModel.retryLastMessage()
-        
+
         // Then
         XCTAssertTrue(mockWebViewManager.clearWebViewCalled)
         XCTAssertTrue(viewModel.isLoading)
     }
-    
+
     /// Tests message persistence
     ///
     /// Verifies that:
@@ -193,10 +194,10 @@ final class ChatViewModelTests: XCTestCase {
     func testMessagePersistence() async throws {
         // Given
         let message = "Test message"
-        
+
         // When
         viewModel.sendMessage(message)
-        
+
         // Then
         XCTAssertTrue(mockStorageManager.saveMessagesCalled)
     }
@@ -212,38 +213,38 @@ final class ChatViewModelTests: XCTestCase {
 /// - Simplified WebView behavior
 class MockWebViewManager: WebViewManager {
     // MARK: - Properties
-    
+
     var createWebViewCalled = false
     var loadAIServiceCalled = false
     var injectMessageCalled = false
     var clearWebViewCalled = false
     private var errorSubject = PassthroughSubject<Error?, Never>()
-    
+
     // MARK: - WebViewManager Overrides
-    
+
     override var error: AnyPublisher<Error?, Never> {
         errorSubject.eraseToAnyPublisher()
     }
-    
+
     override func createWebView() -> WKWebView {
         createWebViewCalled = true
         return WKWebView()
     }
-    
-    override func loadAIService(url: URL) {
+
+    override func loadAIService(url _: URL) {
         loadAIServiceCalled = true
     }
-    
-    override func injectMessage(_ message: String) {
+
+    override func injectMessage(_: String) {
         injectMessageCalled = true
     }
-    
+
     override func clearWebView() {
         clearWebViewCalled = true
     }
-    
+
     // MARK: - Mock Methods
-    
+
     /// Simulates an error in the WebView manager
     ///
     /// - Parameter error: The error to simulate
@@ -260,17 +261,17 @@ class MockWebViewManager: WebViewManager {
 /// - No actual persistence
 class MockStorageManager: StorageManager {
     // MARK: - Properties
-    
+
     var clearMessagesCalled = false
     var saveMessagesCalled = false
-    
+
     // MARK: - StorageManager Overrides
-    
+
     override func clearMessages() {
         clearMessagesCalled = true
     }
-    
-    override func saveMessages(_ messages: [ChatMessage]) {
+
+    override func saveMessages(_: [ChatMessage]) {
         saveMessagesCalled = true
     }
 }
@@ -283,13 +284,13 @@ class MockStorageManager: StorageManager {
 /// - No actual persistence
 class MockSettingsManager: SettingsManager {
     // MARK: - Properties
-    
+
     private var _selectedAIService: AIService = .chatGPT
-    
+
     // MARK: - SettingsManager Overrides
-    
+
     override var selectedAIService: AIService {
         get { _selectedAIService }
         set { _selectedAIService = newValue }
     }
-} 
+}

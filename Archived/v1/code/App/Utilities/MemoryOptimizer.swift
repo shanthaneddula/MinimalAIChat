@@ -1,5 +1,5 @@
-import Foundation
 import AppKit
+import Foundation
 import WebKit
 
 /// A class that handles memory optimization for the application
@@ -63,7 +63,7 @@ public final class MemoryOptimizer: Sendable {
     private let webViewCleanupActor: WebViewCleanupActor
     private var pressureObserver: MemoryPressureObserver?
     private let logger = Logger(label: "com.minimalaichat.memoryoptimizer")
-    
+
     public init(webViewCleanupActor: WebViewCleanupActor = WebViewCleanupActor()) {
         self.webViewCleanupActor = webViewCleanupActor
         let handler: (MemoryPressureLevel) -> Void = { [weak self] level in
@@ -71,19 +71,19 @@ public final class MemoryOptimizer: Sendable {
                 await self?.handleMemoryPressure(level)
             }
         }
-        self.pressureObserver = MemoryPressureObserver(handler: handler)
+        pressureObserver = MemoryPressureObserver(handler: handler)
     }
-    
+
     /// Starts monitoring memory pressure
     func startMonitoring() {
         pressureObserver?.startObserving()
     }
-    
+
     /// Stops monitoring memory pressure
     func stopMonitoring() {
         pressureObserver?.stopObserving()
     }
-    
+
     /// Handles memory pressure events by performing appropriate cleanup operations
     /// - Parameter level: The current memory pressure level
     private func handleMemoryPressure(_ level: MemoryPressureLevel) async {
@@ -101,44 +101,44 @@ public final class MemoryOptimizer: Sendable {
             break
         }
     }
-    
+
     /// Optimizes memory usage by cleaning up resources
     public func optimizeMemoryUsage() async {
         do {
             // Clean up WebKit resources using the actor
             try await webViewCleanupActor.cleanup()
-            
+
             // Clear image caches
             clearImageCaches()
-            
+
             // Clear temporary files
             clearTemporaryFiles()
-            
+
             logger.info("Memory optimization completed successfully")
         } catch {
             logger.error("Failed to optimize memory: \(error.localizedDescription)")
         }
     }
-    
+
     private func clearImageCaches() {
         // Clear NSCache instances
         URLCache.shared.removeAllCachedResponses()
-        
+
         // Clear any custom image caches
         // Add your custom image cache clearing logic here
     }
-    
+
     private func clearTemporaryFiles() {
         let fileManager = FileManager.default
         let tempDirectory = fileManager.temporaryDirectory
-        
+
         do {
             let tempFiles = try fileManager.contentsOfDirectory(
                 at: tempDirectory,
                 includingPropertiesForKeys: nil,
                 options: [.skipsHiddenFiles]
             )
-            
+
             for file in tempFiles {
                 try? fileManager.removeItem(at: file)
             }

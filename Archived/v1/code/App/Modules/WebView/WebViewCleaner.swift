@@ -23,4 +23,4 @@ import WebKit
 /// a custom version of the cleanup methods that avoids Objective-C bridging issues.
 class WebViewCleaner: WebViewCleanupable {
     // Uses default implementation from WebViewCleanupable protocol
-} 
+}

@@ -34,26 +34,26 @@ public enum KeychainError: LocalizedError {
     case readError(status: OSStatus)
     case updateError(status: OSStatus)
     case deleteError(status: OSStatus)
-    
+
     public var errorDescription: String? {
         switch self {
-        case .saveError(let status):
+        case let .saveError(status):
             return "Failed to save to keychain: \(status)"
-        case .readError(let status):
+        case let .readError(status):
             return "Failed to read from keychain: \(status)"
-        case .updateError(let status):
+        case let .updateError(status):
             return "Failed to update keychain item: \(status)"
-        case .deleteError(let status):
+        case let .deleteError(status):
             return "Failed to delete from keychain: \(status)"
         }
     }
-    
+
     public var errorCode: Int {
         switch self {
-        case .saveError(let status): return Int(status)
-        case .readError(let status): return Int(status)
-        case .updateError(let status): return Int(status)
-        case .deleteError(let status): return Int(status)
+        case let .saveError(status): return Int(status)
+        case let .readError(status): return Int(status)
+        case let .updateError(status): return Int(status)
+        case let .deleteError(status): return Int(status)
         }
     }
-} 
+}

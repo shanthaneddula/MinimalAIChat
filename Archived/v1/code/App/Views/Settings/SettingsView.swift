@@ -5,7 +5,7 @@ struct SettingsView: View {
     @State private var apiKey: String = ""
     @State private var selectedKey: KeyCode = .space
     @State private var selectedModifiers: Set<KeyModifier> = [.command]
-    
+
     var body: some View {
         Form {
             Group {
@@ -18,7 +18,7 @@ struct SettingsView: View {
                 } header: {
                     Text("Service Type")
                 }
-                
+
                 Section {
                     SecureField("API Key", text: $apiKey)
                         .textFieldStyle(.roundedBorder)
@@ -34,7 +34,7 @@ struct SettingsView: View {
                 } header: {
                     Text("API Key")
                 }
-                
+
                 Section {
                     Picker("Theme", selection: $settingsManager.selectedTheme) {
                         ForEach(Theme.allCases, id: \.self) { theme in
@@ -44,14 +44,14 @@ struct SettingsView: View {
                 } header: {
                     Text("Theme")
                 }
-                
+
                 Section {
                     Picker("Key", selection: $selectedKey) {
                         ForEach([KeyCode.space, .return, .tab, .escape], id: \.self) { key in
                             Text(key.rawValue).tag(key)
                         }
                     }
-                    
+
                     Toggle("Command", isOn: Binding(
                         get: { selectedModifiers.contains(.command) },
                         set: { toggleModifier(.command, $0) }
@@ -79,7 +79,7 @@ struct SettingsView: View {
             Text(settingsManager.errorMessage ?? "Unknown error")
         }
     }
-    
+
     private func toggleModifier(_ modifier: KeyModifier, _ isOn: Bool) {
         if isOn {
             selectedModifiers.insert(modifier)
@@ -90,9 +90,10 @@ struct SettingsView: View {
 }
 
 // MARK: - General Settings
+
 private struct GeneralSettingsView: View {
     @ObservedObject var settingsManager: SettingsManager
-    
+
     var body: some View {
         Form {
             Section {
@@ -104,7 +105,7 @@ private struct GeneralSettingsView: View {
             } header: {
                 Text("Service Type")
             }
-            
+
             Section {
                 Picker("Model", selection: Binding(
                     get: { settingsManager.getModel() },
@@ -122,11 +123,12 @@ private struct GeneralSettingsView: View {
 }
 
 // MARK: - API Settings
+
 private struct APISettingsView: View {
     @ObservedObject var settingsManager: SettingsManager
     @Binding var apiKey: String
     @Binding var showingError: Bool
-    
+
     var body: some View {
         Form {
             Section {
@@ -135,7 +137,7 @@ private struct APISettingsView: View {
             } header: {
                 Text("API Key")
             }
-            
+
             Section {
                 Button("Save API Key") {
                     do {
@@ -157,9 +159,10 @@ private struct APISettingsView: View {
 }
 
 // MARK: - Appearance Settings
+
 private struct AppearanceSettingsView: View {
     @ObservedObject var settingsManager: SettingsManager
-    
+
     var body: some View {
         Form {
             Section {
@@ -171,7 +174,7 @@ private struct AppearanceSettingsView: View {
             } header: {
                 Text("Theme")
             }
-            
+
             Section {
                 ColorPicker("Accent Color", selection: Binding(
                     get: { settingsManager.getAccentColor() },
@@ -186,12 +189,13 @@ private struct AppearanceSettingsView: View {
 }
 
 // MARK: - Hotkey Settings
+
 private struct HotkeySettingsView: View {
     @ObservedObject var settingsManager: SettingsManager
     @Binding var showingError: Bool
     @State private var selectedKey: KeyCode = .space
     @State private var selectedModifiers: Set<KeyModifier> = [.command]
-    
+
     var body: some View {
         Form {
             Section("Global Hotkey") {
@@ -200,27 +204,27 @@ private struct HotkeySettingsView: View {
                         Text(key.rawValue.capitalized).tag(key)
                     }
                 }
-                
+
                 Toggle("Command", isOn: Binding(
                     get: { selectedModifiers.contains(.command) },
                     set: { toggleModifier(.command, $0) }
                 ))
-                
+
                 Toggle("Shift", isOn: Binding(
                     get: { selectedModifiers.contains(.shift) },
                     set: { toggleModifier(.shift, $0) }
                 ))
-                
+
                 Toggle("Option", isOn: Binding(
                     get: { selectedModifiers.contains(.option) },
                     set: { toggleModifier(.option, $0) }
                 ))
-                
+
                 Toggle("Control", isOn: Binding(
                     get: { selectedModifiers.contains(.control) },
                     set: { toggleModifier(.control, $0) }
                 ))
-                
+
                 Button("Save Hotkey") {
                     do {
                         try settingsManager.setGlobalHotkey(Hotkey(key: selectedKey, modifiers: selectedModifiers))
@@ -238,7 +242,7 @@ private struct HotkeySettingsView: View {
             Text(settingsManager.error ?? "Unknown error")
         }
     }
-    
+
     private func toggleModifier(_ modifier: KeyModifier, _ isOn: Bool) {
         if isOn {
             selectedModifiers.insert(modifier)
@@ -250,4 +254,4 @@ private struct HotkeySettingsView: View {
 
 #Preview {
     SettingsView(settingsManager: SettingsManager())
-} 
+}

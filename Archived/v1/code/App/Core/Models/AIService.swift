@@ -2,9 +2,9 @@ public enum AIService: String, Codable, CaseIterable, Identifiable {
     case openAI = "OpenAI"
     case claude = "Claude"
     case deepSeek = "DeepSeek"
-    
-    public var id: String { self.rawValue }
-    
+
+    public var id: String { rawValue }
+
     public var displayName: String {
         switch self {
         case .openAI: return "OpenAI"
@@ -12,7 +12,7 @@ public enum AIService: String, Codable, CaseIterable, Identifiable {
         case .deepSeek: return "DeepSeek"
         }
     }
-    
+
     public var url: URL {
         switch self {
         case .openAI:
@@ -23,7 +23,7 @@ public enum AIService: String, Codable, CaseIterable, Identifiable {
             return URL(string: "https://chat.deepseek.com")!
         }
     }
-    
+
     public var icon: String {
         switch self {
         case .openAI: return "openai-icon"
@@ -31,4 +31,4 @@ public enum AIService: String, Codable, CaseIterable, Identifiable {
         case .deepSeek: return "deepseek-icon"
         }
     }
-} 
+}

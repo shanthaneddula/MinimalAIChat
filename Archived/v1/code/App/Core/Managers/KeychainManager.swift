@@ -4,9 +4,9 @@ import Security
 /// Manages secure storage of API keys in the keychain
 public actor KeychainManager {
     private let service = "com.minimalaichat.keychain"
-    
+
     public init() {}
-    
+
     /// Retrieves an API key for the specified service
     /// - Parameter service: The AI service type
     /// - Returns: The stored API key
@@ -16,21 +16,22 @@ public actor KeychainManager {
             kSecClass as String: kSecClassGenericPassword,
             kSecAttrService as String: self.service,
             kSecAttrAccount as String: service.rawValue,
-            kSecReturnData as String: true
+            kSecReturnData as String: true,
         ]
-        
+
         var result: AnyObject?
         let status = SecItemCopyMatching(query as CFDictionary, &result)
-        
+
         guard status == errSecSuccess,
               let data = result as? Data,
-              let key = String(data: data, encoding: .utf8) else {
+              let key = String(data: data, encoding: .utf8)
+        else {
             throw KeychainError.keyNotFound
         }
-        
+
         return key
     }
-    
+
     /// Stores an API key for the specified service
     /// - Parameters:
     ///   - key: The API key to store
@@ -40,28 +41,28 @@ public actor KeychainManager {
         guard let data = key.data(using: .utf8) else {
             throw KeychainError.invalidData
         }
-        
+
         let query: [String: Any] = [
             kSecClass as String: kSecClassGenericPassword,
             kSecAttrService as String: self.service,
             kSecAttrAccount as String: service.rawValue,
-            kSecValueData as String: data
+            kSecValueData as String: data,
         ]
-        
+
         let status = SecItemAdd(query as CFDictionary, nil)
-        
+
         if status == errSecDuplicateItem {
             // Update existing item
             let updateQuery: [String: Any] = [
                 kSecClass as String: kSecClassGenericPassword,
                 kSecAttrService as String: self.service,
-                kSecAttrAccount as String: service.rawValue
+                kSecAttrAccount as String: service.rawValue,
             ]
-            
+
             let attributes: [String: Any] = [
-                kSecValueData as String: data
+                kSecValueData as String: data,
             ]
-            
+
             let updateStatus = SecItemUpdate(updateQuery as CFDictionary, attributes as CFDictionary)
             guard updateStatus == errSecSuccess else {
                 throw KeychainError.saveFailed
@@ -70,7 +71,7 @@ public actor KeychainManager {
             throw KeychainError.saveFailed
         }
     }
-    
+
     /// Deletes an API key for the specified service
     /// - Parameter service: The AI service type
     /// - Throws: KeychainError if the key cannot be deleted
@@ -78,9 +79,9 @@ public actor KeychainManager {
         let query: [String: Any] = [
             kSecClass as String: kSecClassGenericPassword,
             kSecAttrService as String: self.service,
-            kSecAttrAccount as String: service.rawValue
+            kSecAttrAccount as String: service.rawValue,
         ]
-        
+
         let status = SecItemDelete(query as CFDictionary)
         guard status == errSecSuccess || status == errSecItemNotFound else {
             throw KeychainError.deleteFailed
@@ -94,7 +95,7 @@ public enum KeychainError: LocalizedError {
     case invalidData
     case saveFailed
     case deleteFailed
-    
+
     public var errorDescription: String? {
         switch self {
         case .keyNotFound:
@@ -107,4 +108,4 @@ public enum KeychainError: LocalizedError {
             return "Failed to delete API key from keychain"
         }
     }
-} 
+}

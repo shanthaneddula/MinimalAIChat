@@ -41,7 +41,7 @@
 public enum Keychain {
     /// The service identifier for the keychain
     public static let service = "com.minimalaichat.keychain"
-    
+
     /// The default accessibility setting for keychain items
     public static let defaultAccessibility = kSecAttrAccessibleAfterFirstUnlock
-} 
+}

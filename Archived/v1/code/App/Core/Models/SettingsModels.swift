@@ -1,18 +1,21 @@
 import SwiftUI
 
 // MARK: - Service Types
+
 enum AIServiceType: String, Codable {
     case directAPI
     case webWrapper
 }
 
 // MARK: - AI Models
+
 enum AIModel: String, Codable {
     case gpt35 = "gpt-3.5-turbo"
     case gpt4 = "gpt-4"
 }
 
 // MARK: - Theme
+
 enum Theme: String, Codable {
     case system
     case light
@@ -20,10 +23,11 @@ enum Theme: String, Codable {
 }
 
 // MARK: - Hotkey
+
 struct Hotkey: Codable, Equatable {
     let key: KeyCode
     let modifiers: Set<KeyModifier>
-    
+
     var isValid: Bool {
         !modifiers.isEmpty
     }
@@ -32,27 +36,29 @@ struct Hotkey: Codable, Equatable {
 // Using KeyCode and KeyModifier from KeyCombo.swift
 
 // MARK: - Settings Error
+
 enum SettingsError: LocalizedError {
     case invalidAPIKey
     case invalidHotkey
     case keychainError(Error)
     case persistenceError(Error)
-    
+
     var errorDescription: String? {
         switch self {
         case .invalidAPIKey:
             return "Invalid API key format"
         case .invalidHotkey:
             return "Invalid hotkey combination"
-        case .keychainError(let error):
+        case let .keychainError(error):
             return "Keychain error: \(error.localizedDescription)"
-        case .persistenceError(let error):
+        case let .persistenceError(error):
             return "Failed to save settings: \(error.localizedDescription)"
         }
     }
 }
 
 // MARK: - Keychain Protocol
+
 protocol KeychainManagerProtocol {
     func store(_ value: String, for key: String) throws
     func retrieve(for key: String) throws -> String
@@ -64,7 +70,7 @@ enum KeychainError: LocalizedError {
     case duplicateItem
     case invalidItemFormat
     case unhandledError(Error)
-    
+
     var errorDescription: String? {
         switch self {
         case .itemNotFound:
@@ -73,8 +79,8 @@ enum KeychainError: LocalizedError {
             return "Item already exists in keychain"
         case .invalidItemFormat:
             return "Invalid item format"
-        case .unhandledError(let error):
+        case let .unhandledError(error):
             return "Unhandled keychain error: \(error.localizedDescription)"
         }
     }
-} 
+}

@@ -6,9 +6,9 @@ public struct MinimalAIChatMessage: Codable, Identifiable {
     public let content: String
     public let isUser: Bool
     public let timestamp: Date
-    
+
     public init(content: String, isUser: Bool, timestamp: Date = Date()) {
-        self.id = UUID()
+        id = UUID()
         self.content = content
         self.isUser = isUser
         self.timestamp = timestamp
@@ -16,4 +16,4 @@ public struct MinimalAIChatMessage: Codable, Identifiable {
 }
 
 // Type alias for backward compatibility
-public typealias ChatMessage = MinimalAIChatMessage 
+public typealias ChatMessage = MinimalAIChatMessage

@@ -19,7 +19,7 @@ enum WebsiteDataType {
     case webSQLDatabases
     case indexedDBDatabases
     case allWebsiteData
-    
+
     /// Provides the raw WebKit data type string for each case
     /// - Returns: The corresponding WebKit data type string
     func rawValue() -> String {
@@ -44,7 +44,7 @@ enum WebsiteDataType {
             return WKWebsiteDataTypeAllWebsiteData
         }
     }
-    
+
     /// Defines all available WebKit data types
     static let allTypes: Set<WebsiteDataType> = [
         .memoryCache,
@@ -54,6 +54,6 @@ enum WebsiteDataType {
         .sessionStorage,
         .localStorage,
         .webSQLDatabases,
-        .indexedDBDatabases
+        .indexedDBDatabases,
     ]
-} 
+}

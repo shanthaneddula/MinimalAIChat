@@ -4,7 +4,7 @@ import SwiftUI
 struct ChatView: View {
     @StateObject private var viewModel = ChatViewModel()
     @FocusState private var isInputFocused: Bool
-    
+
     var body: some View {
         VStack(spacing: 0) {
             // Message List
@@ -26,7 +26,7 @@ struct ChatView: View {
                     }
                 }
             }
-            
+
             // Input Field
             VStack(spacing: 0) {
                 Divider()
@@ -34,12 +34,12 @@ struct ChatView: View {
                     TextField("Type a message...", text: $viewModel.inputText, axis: .vertical)
                         .textFieldStyle(.plain)
                         .focused($isInputFocused)
-                        .lineLimit(1...5)
+                        .lineLimit(1 ... 5)
                         .padding(.horizontal, 12)
                         .padding(.vertical, 8)
                         .background(Color(.textBackgroundColor))
                         .cornerRadius(8)
-                    
+
                     Button(action: {
                         Task {
                             await viewModel.sendMessage()
@@ -64,25 +64,25 @@ struct ChatView: View {
 /// A view that displays a single message bubble
 struct MessageBubble: View {
     let message: ChatMessage
-    
+
     var body: some View {
         HStack {
             if message.isUser {
                 Spacer()
             }
-            
+
             VStack(alignment: message.isUser ? .trailing : .leading) {
                 Text(message.content)
                     .padding(12)
                     .background(message.isUser ? Color.accentColor : Color(.textBackgroundColor))
                     .foregroundColor(message.isUser ? .white : .primary)
                     .cornerRadius(16)
-                
+
                 Text(message.timestamp.formatted(.dateTime.hour().minute()))
                     .font(.caption2)
                     .foregroundColor(.secondary)
             }
-            
+
             if !message.isUser {
                 Spacer()
             }
@@ -92,4 +92,4 @@ struct MessageBubble: View {
 
 #Preview {
     ChatView()
-} 
+}

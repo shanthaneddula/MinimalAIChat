@@ -1,6 +1,6 @@
 import Foundation
-import Quick
 import Nimble
+import Quick
 
 class TestConfiguration: QuickConfiguration {
     override class func configure(_ configuration: Configuration) {
@@ -9,7 +9,7 @@ class TestConfiguration: QuickConfiguration {
             // Global setup before all tests
             // Initialize test environment, load test data, etc.
         }
-        
+
         configuration.afterSuite {
             // Global cleanup after all tests
             // Clean up resources, reset state, etc.
@@ -18,32 +18,34 @@ class TestConfiguration: QuickConfiguration {
 }
 
 // MARK: - Test Helpers
+
 extension TestConfiguration {
     static func setupTestEnvironment() {
         // Set up test environment variables
         ProcessInfo.processInfo.environment["TESTING"] = "1"
-        
+
         // Configure test-specific settings
         UserDefaults.standard.set(true, forKey: "isTesting")
     }
-    
+
     static func cleanupTestEnvironment() {
         // Reset environment variables
         ProcessInfo.processInfo.environment.removeValue(forKey: "TESTING")
-        
+
         // Clean up test-specific settings
         UserDefaults.standard.removeObject(forKey: "isTesting")
     }
 }
 
 // MARK: - Performance Testing Configuration
+
 extension TestConfiguration {
     static func configurePerformanceTests() {
         // Set up performance testing environment
         // Configure memory limits, timeouts, etc.
     }
-    
+
     static func measurePerformance(_ block: @escaping () -> Void) {
         measure(block)
     }
-} 
+}

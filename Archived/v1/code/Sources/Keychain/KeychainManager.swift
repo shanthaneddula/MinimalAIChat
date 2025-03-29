@@ -1,6 +1,6 @@
 import Foundation
-import Security
 import os.log
+import Security
 
 /// A class that manages secure storage operations using the system keychain
 ///
@@ -40,9 +40,9 @@ import os.log
 public final class KeychainManager {
     private let service = Keychain.service
     private let logger = Logger(subsystem: "com.minimalaichat", category: "KeychainManager")
-    
+
     public init() {}
-    
+
     /// Saves data to the keychain
     ///
     /// - Parameters:
@@ -55,11 +55,11 @@ public final class KeychainManager {
             kSecAttrService as String: service,
             kSecAttrAccount as String: key,
             kSecValueData as String: data,
-            kSecAttrAccessible as String: Keychain.defaultAccessibility
+            kSecAttrAccessible as String: Keychain.defaultAccessibility,
         ]
-        
+
         let status = SecItemAdd(query as CFDictionary, nil)
-        
+
         if status == errSecDuplicateItem {
             try update(data, for: key)
         } else if status != errSecSuccess {
@@ -67,7 +67,7 @@ public final class KeychainManager {
             throw KeychainError.saveError(status: status)
         }
     }
-    
+
     /// Retrieves data from the keychain
     ///
     /// - Parameter key: The key associated with the data
@@ -78,21 +78,22 @@ public final class KeychainManager {
             kSecClass as String: kSecClassGenericPassword,
             kSecAttrService as String: service,
             kSecAttrAccount as String: key,
-            kSecReturnData as String: true
+            kSecReturnData as String: true,
         ]
-        
+
         var result: AnyObject?
         let status = SecItemCopyMatching(query as CFDictionary, &result)
-        
+
         guard status == errSecSuccess,
-              let data = result as? Data else {
+              let data = result as? Data
+        else {
             logger.error("Failed to get data: \(status, privacy: .public)")
             throw KeychainError.readError(status: status)
         }
-        
+
         return data
     }
-    
+
     /// Updates data in the keychain
     ///
     /// - Parameters:
@@ -103,21 +104,21 @@ public final class KeychainManager {
         let query: [String: Any] = [
             kSecClass as String: kSecClassGenericPassword,
             kSecAttrService as String: service,
-            kSecAttrAccount as String: key
+            kSecAttrAccount as String: key,
         ]
-        
+
         let attributes: [String: Any] = [
-            kSecValueData as String: data
+            kSecValueData as String: data,
         ]
-        
+
         let status = SecItemUpdate(query as CFDictionary, attributes as CFDictionary)
-        
+
         if status != errSecSuccess {
             logger.error("Failed to update data: \(status, privacy: .public)")
             throw KeychainError.updateError(status: status)
         }
     }
-    
+
     /// Deletes data from the keychain
     ///
     /// - Parameter key: The key associated with the data
@@ -126,14 +127,14 @@ public final class KeychainManager {
         let query: [String: Any] = [
             kSecClass as String: kSecClassGenericPassword,
             kSecAttrService as String: service,
-            kSecAttrAccount as String: key
+            kSecAttrAccount as String: key,
         ]
-        
+
         let status = SecItemDelete(query as CFDictionary)
-        
-        if status != errSecSuccess && status != errSecItemNotFound {
+
+        if status != errSecSuccess, status != errSecItemNotFound {
             logger.error("Failed to delete data: \(status, privacy: .public)")
             throw KeychainError.deleteError(status: status)
         }
     }
-} 
+}

@@ -1,6 +1,6 @@
+import Crypto
 import Foundation
 import Logging
-import Crypto
 
 /// A service that handles communication with AI services
 ///
@@ -35,7 +35,7 @@ public class AIServiceClient {
     private let sessionManager: SessionManager
     private let settingsManager: SettingsManager
     private let keychainManager: KeychainManager
-    
+
     public init(
         sessionManager: SessionManager? = nil,
         settingsManager: SettingsManager? = nil,
@@ -45,7 +45,7 @@ public class AIServiceClient {
         self.settingsManager = settingsManager ?? SettingsManager()
         self.keychainManager = keychainManager ?? KeychainManager()
     }
-    
+
     /// Sends a message to the configured AI service
     /// - Parameter message: The message to send
     /// - Returns: The AI service's response
@@ -53,10 +53,10 @@ public class AIServiceClient {
     public func sendMessage(_ message: String) async throws -> String {
         // Get current settings
         let settings = try await settingsManager.getSettings()
-        
+
         // Validate session
         try await sessionManager.validateSession()
-        
+
         // Select appropriate service based on settings
         switch settings.selectedService {
         case .claude:
@@ -67,7 +67,7 @@ public class AIServiceClient {
             return try await sendToDeepSeek(message)
         }
     }
-    
+
     /// Sends a message to Claude
     /// - Parameter message: The message to send
     /// - Returns: Claude's response
@@ -75,26 +75,26 @@ public class AIServiceClient {
     private func sendToClaude(_ message: String) async throws -> String {
         let apiKey = try await keychainManager.getAPIKey(for: .claude)
         let url = URL(string: APIConfig.Claude.messagesEndpoint)!
-        
+
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
         request.setValue("Bearer \(apiKey)", forHTTPHeaderField: "x-api-key")
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        
+
         let body: [String: Any] = [
             "model": APIConfig.Claude.defaultModel,
             "max_tokens": APIConfig.Claude.maxTokens,
             "temperature": APIConfig.Claude.temperature,
             "messages": [
-                ["role": "user", "content": message]
-            ]
+                ["role": "user", "content": message],
+            ],
         ]
-        
+
         request.httpBody = try JSONSerialization.data(withJSONObject: body)
-        
+
         return try await performRequest(request)
     }
-    
+
     /// Sends a message to OpenAI
     /// - Parameter message: The message to send
     /// - Returns: OpenAI's response
@@ -102,26 +102,26 @@ public class AIServiceClient {
     private func sendToOpenAI(_ message: String) async throws -> String {
         let apiKey = try await keychainManager.getAPIKey(for: .openAI)
         let url = URL(string: APIConfig.OpenAI.chatEndpoint)!
-        
+
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
         request.setValue("Bearer \(apiKey)", forHTTPHeaderField: "Authorization")
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        
+
         let body: [String: Any] = [
             "model": APIConfig.OpenAI.defaultModel,
             "max_tokens": APIConfig.OpenAI.maxTokens,
             "temperature": APIConfig.OpenAI.temperature,
             "messages": [
-                ["role": "user", "content": message]
-            ]
+                ["role": "user", "content": message],
+            ],
         ]
-        
+
         request.httpBody = try JSONSerialization.data(withJSONObject: body)
-        
+
         return try await performRequest(request)
     }
-    
+
     /// Sends a message to DeepSeek
     /// - Parameter message: The message to send
     /// - Returns: DeepSeek's response
@@ -129,26 +129,26 @@ public class AIServiceClient {
     private func sendToDeepSeek(_ message: String) async throws -> String {
         let apiKey = try await keychainManager.getAPIKey(for: .deepSeek)
         let url = URL(string: APIConfig.DeepSeek.chatEndpoint)!
-        
+
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
         request.setValue("Bearer \(apiKey)", forHTTPHeaderField: "Authorization")
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-        
+
         let body: [String: Any] = [
             "model": APIConfig.DeepSeek.defaultModel,
             "max_tokens": APIConfig.DeepSeek.maxTokens,
             "temperature": APIConfig.DeepSeek.temperature,
             "messages": [
-                ["role": "user", "content": message]
-            ]
+                ["role": "user", "content": message],
+            ],
         ]
-        
+
         request.httpBody = try JSONSerialization.data(withJSONObject: body)
-        
+
         return try await performRequest(request)
     }
-    
+
     /// Performs an API request with retry logic and error handling
     /// - Parameter request: The URL request to perform
     /// - Returns: The response string
@@ -156,33 +156,33 @@ public class AIServiceClient {
     private func performRequest(_ request: URLRequest) async throws -> String {
         var currentRetry = 0
         var lastError: Error?
-        
+
         while currentRetry < APIConfig.Common.maxRetries {
             do {
                 let (data, response) = try await URLSession.shared.data(for: request)
-                
+
                 guard let httpResponse = response as? HTTPURLResponse else {
                     throw AIServiceError.invalidResponse
                 }
-                
+
                 switch httpResponse.statusCode {
                 case 200:
                     let result = try JSONDecoder().decode(APIResponse.self, from: data)
                     return result.choices.first?.message.content ?? ""
-                    
+
                 case 401:
                     throw AIServiceError.invalidSession
-                    
+
                 case 429:
                     throw AIServiceError.rateLimitExceeded
-                    
+
                 default:
                     throw AIServiceError.unknown
                 }
             } catch {
                 lastError = error
                 currentRetry += 1
-                
+
                 if currentRetry < APIConfig.Common.maxRetries {
                     let delay = APIConfig.Common.retryDelay * pow(APIConfig.Common.exponentialBackoffFactor, Double(currentRetry - 1))
                     try await Task.sleep(nanoseconds: UInt64(delay * 1_000_000_000))
@@ -190,7 +190,7 @@ public class AIServiceClient {
                 }
             }
         }
-        
+
         throw lastError ?? AIServiceError.unknown
     }
 }
@@ -202,7 +202,7 @@ enum AIServiceError: LocalizedError {
     case networkError
     case invalidResponse
     case unknown
-    
+
     var errorDescription: String? {
         switch self {
         case .invalidSession:
@@ -220,6 +220,7 @@ enum AIServiceError: LocalizedError {
 }
 
 // MARK: - API Response Models
+
 private struct APIResponse: Codable {
     let choices: [Choice]
 }
@@ -230,4 +231,4 @@ private struct Choice: Codable {
 
 private struct Message: Codable {
     let content: String
-} 
+}

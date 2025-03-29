@@ -9,16 +9,16 @@ class UniversalLinkRouter {
             NSLog("Invalid universal link domain: \(url.host ?? "none")")
             return
         }
-        
+
         // Extract path components
         let pathComponents = url.pathComponents.filter { $0 != "/" }
-        
+
         guard !pathComponents.isEmpty else {
             // Default action for domain root
             WindowManager.shared.showMainWindow()
             return
         }
-        
+
         // Route based on first path component
         switch pathComponents[0] {
         case "chat":
@@ -32,11 +32,11 @@ class UniversalLinkRouter {
             WindowManager.shared.showMainWindow()
         }
     }
-    
+
     /// Handle chat-related universal links
-    private func handleChatLink(url: URL, pathComponents: [String]) {
+    private func handleChatLink(url: URL, pathComponents _: [String]) {
         WindowManager.shared.showMainWindow()
-        
+
         // Extract query if present
         if let queryItems = URLComponents(url: url, resolvingAgainstBaseURL: false)?.queryItems {
             // Process query parameters
@@ -53,13 +53,13 @@ class UniversalLinkRouter {
             }
         }
     }
-    
+
     /// Handle service-related universal links
     private func handleServiceLink(url: URL, pathComponents: [String]) {
         // Check if we have a service name in the path
         if pathComponents.count > 1 {
             let serviceName = pathComponents[1]
-            
+
             // Process service-specific parameters
             if let queryItems = URLComponents(url: url, resolvingAgainstBaseURL: false)?.queryItems {
                 for item in queryItems {
@@ -74,7 +74,7 @@ class UniversalLinkRouter {
                     }
                 }
             }
-            
+
             // Show the main window
             WindowManager.shared.showMainWindow()
         }
