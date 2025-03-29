@@ -1,0 +1,198 @@
+MinimalAIChat
+├── App
+│   ├── Core
+│   │   ├── AppDelegate.swift
+│   │   ├── AppMain.swift
+│   │   ├── Constants.swift
+│   │   ├── HotkeyUIAlerts.swift
+│   │   ├── LaunchAgentService.swift
+│   │   ├── Managers
+│   │   │   ├── Hotkey
+│   │   │   │   ├── HotKey.swift
+│   │   │   │   ├── HotKeysController.swift
+│   │   │   │   └── KeyCombo.swift
+│   │   │   ├── SessionManager.swift
+│   │   │   ├── Settings
+│   │   │   ├── SettingsManager.swift
+│   │   │   ├── StorageManager.swift
+│   │   │   └── WebViewManager.swift
+│   │   ├── MemoryPressureLevel.swift
+│   │   ├── Models
+│   │   │   ├── ChatMessage.swift
+│   │   │   └── SettingsModels.swift
+│   │   ├── Services
+│   │   └── ViewModels
+│   ├── Modules
+│   │   ├── Discovery
+│   │   │   └── SpotlightIndexer.swift
+│   │   ├── Hotkey
+│   │   │   └── HotkeyManager.swift
+│   │   ├── Navigation
+│   │   │   ├── DeepLinkHandler.swift
+│   │   │   ├── DeepLinkRoute.swift
+│   │   │   ├── UniversalLinkRouter.swift
+│   │   │   └── WindowManager.swift
+│   │   ├── Security
+│   │   │   ├── CertificatePinner.swift
+│   │   │   └── ThreadSafeCache.swift
+│   │   ├── Subscription
+│   │   │   ├── Models
+│   │   │   │   ├── Product.swift
+│   │   │   │   └── SubscriptionTier.swift
+│   │   │   ├── Services
+│   │   │   │   ├── PurchaseManager.swift
+│   │   │   │   ├── ReceiptValidator.swift
+│   │   │   │   └── SubscriptionService.swift
+│   │   │   └── UI
+│   │   │       ├── PaywallView.swift
+│   │   │       └── RestorePurchaseButton.swift
+│   │   └── WebView
+│   │       ├── WebViewCleaner.swift
+│   │       ├── WebViewCleanupActor.swift
+│   │       ├── WebViewCleanupable.swift
+│   │       ├── WebViewModel.swift
+│   │       └── WebsiteDataType.swift
+│   ├── Services
+│   │   └── AI
+│   │       └── AIService.swift
+│   ├── UI
+│   │   ├── Accessibility
+│   │   │   └── AccessibleWebView.swift
+│   │   ├── Localization
+│   │   │   ├── Localizable.xcstrings
+│   │   │   └── String+Localization.swift
+│   │   └── Views
+│   │       ├── Chat
+│   │       │   ├── ChatView.swift
+│   │       │   └── ChatViewModel.swift
+│   │       ├── Error
+│   │       │   ├── AppError.swift
+│   │       │   └── ErrorView.swift
+│   │       ├── Main
+│   │       │   ├── MainChatView.swift
+│   │       │   ├── StatusBarView.swift
+│   │       │   └── WebViewWrapper.swift
+│   │       ├── Onboarding
+│   │       │   └── PrivacyConsentView.swift
+│   │       └── Preferences
+│   │           ├── AccountPrefsView.swift
+│   │           ├── AdvancedPrefsView.swift
+│   │           ├── GeneralPrefsView.swift
+│   │           └── PreferencesView.swift
+│   ├── Utilities
+│   │   ├── ErrorLogger.swift
+│   │   ├── LeakDetector.swift
+│   │   ├── MemoryOptimizer.swift
+│   │   └── MemoryPressureObserver.swift
+│   ├── Views
+│   │   ├── Chat
+│   │   └── Settings
+│   │       └── SettingsView.swift
+│   └── main.swift
+├── Config
+│   ├── APIConfig.example.swift
+│   └── APIConfig.swift
+├── Documentation
+│   ├── App
+│   │   ├── ARCHITECTURE.md
+│   │   ├── MEMORY_MANAGEMENT.md
+│   │   └── THREADING.md
+│   ├── Compliance
+│   │   ├── ACCESSIBILITY.md
+│   │   ├── APP_STORE_REQUIREMENTS.md
+│   │   └── ENTITLEMENTS.md
+│   ├── Legal
+│   │   ├── PRIVACY_POLICY.md
+│   │   └── TERMS_OF_SERVICE.md
+│   └── Process
+│       ├── DEVELOPMENT_WORKFLOW.md
+│       └── RELEASE_CHECKLIST.md
+├── Fastlane
+│   ├── Fastfile
+│   ├── Matchfile
+│   └── scripts
+│       └── release.sh
+├── IssuesAndPossibleFixesRef.md
+├── Package.resolved
+├── Package.swift
+├── ProgressTracker.md
+├── README.md
+├── Resources
+│   ├── Assets.xcassets
+│   ├── Entitlements
+│   │   └── App.entitlements
+│   └── Info.plist
+├── Sources
+│   ├── Keychain
+│   │   ├── Keychain-Swift.h
+│   │   ├── Keychain.h
+│   │   ├── Keychain.swift
+│   │   ├── KeychainError.swift
+│   │   ├── KeychainManager.swift
+│   │   └── module.modulemap
+│   └── MinimalAIChat
+│       └── Core
+│           └── Services
+│               ├── KeychainManager.swift
+│               └── StorageManager.swift
+├── Tests
+│   ├── Integration
+│   │   ├── Hotkey
+│   │   │   └── HotkeyIntegrationTests.swift
+│   │   └── Settings
+│   │       └── SettingsIntegrationTests.swift
+│   ├── MinimalAIChatTests
+│   │   └── ChatViewModelTests.swift
+│   ├── Performance
+│   │   ├── ChatPerformanceTests.swift
+│   │   ├── Hotkey
+│   │   │   └── HotkeyPerformanceTests.swift
+│   │   ├── MemoryTests.swift
+│   │   ├── Settings
+│   │   │   └── SettingsPerformanceTests.swift
+│   │   └── ThreadingTests.swift
+│   ├── TestConfiguration.swift
+│   ├── UI
+│   │   ├── AccessibilityTests.swift
+│   │   ├── ChatUITests.swift
+│   │   ├── Hotkey
+│   │   │   └── HotkeyUITests.swift
+│   │   ├── NavigationTests.swift
+│   │   ├── Settings
+│   │   │   └── SettingsUITests.swift
+│   │   └── Snapshot
+│   │       ├── PaywallLayoutTests.swift
+│   │       └── RTLSupportTests.swift
+│   └── Unit
+│       ├── ChatViewTests.swift
+│       ├── Hotkey
+│       │   ├── HotKeysControllerTests.swift
+│       │   └── HotkeyManagerTests.swift
+│       ├── Settings
+│       │   └── SettingsManagerTests.swift
+│       ├── Subscription
+│       │   └── PurchaseManagerTests.swift
+│       └── WebView
+│           └── WebViewCleanupTests.swift
+├── create_files.sh
+├── public
+└── temp
+    ├── 01-product-requirements.md
+    ├── 02-technical-specification.md
+    ├── 03-project-structure.md
+    ├── 04-project-overview.md
+    ├── 05-implementation-guide.md
+    ├── 06-core-component-implementation.md
+    ├── 07-performance-optimization.md
+    ├── 10-security-compliance.md
+    ├── 11-seo-workflow.md
+    ├── 12-deployment-guide.md
+    ├── 13-glossary.md
+    ├── 14-contributing-guide.md
+    ├── ConversationalApproach.md
+    ├── LICENSE
+    ├── README.md
+    ├── api-key-future-implementation-doc.md
+    └── setup-guide.md
+
+69 directories, 127 files

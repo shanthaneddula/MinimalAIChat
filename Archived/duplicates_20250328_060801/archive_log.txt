@@ -1,0 +1,23 @@
+Archive created at: 20250328_060801
+----------------------------------------
+Archived: App/Modules/Navigation/DeepLinkRoute.swift
+Archived: App/Modules/Security/CertificatePinner.swift
+Archived: App/Modules/Security/ThreadSafeCache.swift
+Archived: App/Modules/Subscription/Models/Product.swift
+Archived: App/Modules/Subscription/Models/SubscriptionTier.swift
+Archived: App/Modules/Subscription/Services/PurchaseManager.swift
+Archived: App/Modules/Subscription/Services/ReceiptValidator.swift
+Archived: App/Modules/Subscription/Services/SubscriptionService.swift
+Archived: App/Modules/Subscription/UI/PaywallView.swift
+Archived: App/Modules/Subscription/UI/RestorePurchaseButton.swift
+Archived: App/UI/Accessibility/AccessibleWebView.swift
+Archived: App/UI/Views/Error/AppError.swift
+Archived: App/UI/Views/Error/ErrorView.swift
+Archived: App/UI/Views/Onboarding/PrivacyConsentView.swift
+Archived: App/UI/Views/Preferences/AccountPrefsView.swift
+Archived: App/UI/Views/Preferences/AdvancedPrefsView.swift
+Archived: App/UI/Views/Preferences/GeneralPrefsView.swift
+Archived: App/UI/Views/Preferences/PreferencesView.swift
+Archived: App/Utilities/ErrorLogger.swift
+Archived: App/Utilities/LeakDetector.swift
+----------------------------------------

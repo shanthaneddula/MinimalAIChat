@@ -1,0 +1,22 @@
+{
+    "configurations": [
+        {
+            "type": "lldb",
+            "request": "launch",
+            "args": [],
+            "cwd": "${workspaceFolder:MinimalAIChat}",
+            "name": "Debug MinimalAIChat",
+            "program": "${workspaceFolder:MinimalAIChat}/.build/debug/MinimalAIChat",
+            "preLaunchTask": "swift: Build Debug MinimalAIChat"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "args": [],
+            "cwd": "${workspaceFolder:MinimalAIChat}",
+            "name": "Release MinimalAIChat",
+            "program": "${workspaceFolder:MinimalAIChat}/.build/release/MinimalAIChat",
+            "preLaunchTask": "swift: Build Release MinimalAIChat"
+        }
+    ]
+}
