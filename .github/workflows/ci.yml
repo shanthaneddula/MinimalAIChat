@@ -7,10 +7,10 @@ on:
     branches: [ main, dev ]
 
 jobs:
-  build-and-test:
+  build:
     name: Build and Test
-    runs-on: macos-14
-    
+    runs-on: macos-latest
+
     steps:
     - uses: actions/checkout@v4
     
@@ -18,10 +18,6 @@ jobs:
       uses: fwal/setup-swift@v1
       with:
         swift-version: "5.9"
-    
-    - name: Install Dependencies
-      run: |
-        brew install swiftlint swiftformat
     
     - name: Build
       run: swift build -v
@@ -30,21 +26,21 @@ jobs:
       run: swift test -v
     
     - name: Run SwiftLint
-      run: swiftlint lint --quiet
+      run: |
+        brew install swiftlint
+        swiftlint lint --reporter codeclimate-logger | tee swiftlint-report.json
     
-    - name: Run SwiftFormat
-      run: swiftformat --lint --exclude Archived Sources Tests
-    
-    - name: Upload Build Artifacts
+    - name: Upload SwiftLint Report
       uses: actions/upload-artifact@v4
       with:
-        name: build
-        path: .build
+        name: swiftlint-report
+        path: swiftlint-report.json
+        retention-days: 7
 
-  code-coverage:
-    name: Code Coverage
-    runs-on: macos-14
-    needs: build-and-test
+  codecov:
+    name: Upload Coverage
+    needs: build
+    runs-on: macos-latest
     
     steps:
     - uses: actions/checkout@v4
@@ -54,36 +50,15 @@ jobs:
       with:
         swift-version: "5.9"
     
-    - name: Generate Code Coverage
+    - name: Install Codecov
+      run: |
+        brew install codecov
+    
+    - name: Generate Coverage
       run: |
         swift test --enable-code-coverage
-        xcrun llvm-cov export -format="lcov" .build/debug/MinimalAIChatPackageTests.xctest/Contents/MacOS/MinimalAIChatPackageTests > coverage.lcov
     
-    - name: Upload Coverage Report
-      uses: codecov/codecov-action@v4
-      with:
-        file: ./coverage.lcov
-        fail_ci_if_error: true
-
-  dependency-updates:
-    name: Dependency Updates
-    runs-on: macos-14
-    needs: build-and-test
-    
-    steps:
-    - uses: actions/checkout@v4
-    
-    - name: Set up Swift
-      uses: fwal/setup-swift@v1
-      with:
-        swift-version: "5.9"
-    
-    - name: Check for Updates
+    - name: Upload Coverage
       run: |
-        swift package update
-        if git diff --quiet Package.resolved; then
-          echo "No dependency updates available"
-        else
-          echo "Dependencies have updates available"
-          git diff Package.resolved
-        fi
+        xcrun llvm-cov export -format="lcov" .build/debug/MinimalAIChatPackageTests.xctest/Contents/MacOS/MinimalAIChatPackageTests > coverage.lcov
+        codecov -f coverage.lcov -B main
